@@ -1,13 +1,11 @@
 #pragma once
 
 #include <string>
-#include <format>
 
 #include <hyprland/src/render/shaders/Textures.hpp>
 
 
-inline static constexpr auto DARK_MODE_FUNC = []() -> std::string {
-    return std::string(R"glsl(
+const std::string DARK_MODE_FUNC = R"glsl(
 	// Original shader by ikz87
 
 	// Apply opacity changes to pixels similar to one color
@@ -36,8 +34,7 @@ inline static constexpr auto DARK_MODE_FUNC = []() -> std::string {
           pixColor.w = target_opacity + (1.0 - target_opacity) * avg_error * amount / similarity;
       }
   }
-    )glsl");
-};
+    )glsl";
 
 
 inline const std::string TEXFRAGSRCRGBA_DARK = R"glsl(
@@ -75,7 +72,7 @@ void main() {
 	    pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC() +  R"glsl(
+	)glsl" + DARK_MODE_FUNC +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
@@ -117,7 +114,7 @@ void main() {
 	pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC() +  R"glsl(
+	)glsl" + DARK_MODE_FUNC +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
@@ -161,7 +158,7 @@ void main() {
 	pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC() +  R"glsl(
+	)glsl" + DARK_MODE_FUNC +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
