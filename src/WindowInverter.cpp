@@ -1,12 +1,10 @@
 #include "WindowInverter.h"
 #include <hyprutils/string/String.hpp>
 
-void WindowInverter::SetBackground(GLfloat r, GLfloat g, GLfloat b)
-{
-    bkgR = r;
-    bkgG = g;
-    bkgB = b;
+void WindowInverter::SetBackground(const std::vector<std::array<GLfloat, 3>> colors) {
+    m_BackgroundColors = colors;
 }
+
 
 void WindowInverter::OnRenderWindowPre()
 {
@@ -18,18 +16,36 @@ void WindowInverter::OnRenderWindowPre()
 
     if (shouldInvert)
     {
+        // Activate each shader and set multiple background colors
         glUseProgram(m_Shaders.RGBA.program);
-        glUniform3f(m_Shaders.BKGA, bkgR, bkgG, bkgB);
+        for (size_t i = 0; i < m_BackgroundColors.size(); ++i) {
+            std::string uniformName = "bkg" + std::to_string(i);  // e.g., "bkg0", "bkg1", ...
+            GLint location = glGetUniformLocation(m_Shaders.RGBA.program, uniformName.c_str());
+            glUniform3f(location, m_BackgroundColors[i][0], m_BackgroundColors[i][1], m_BackgroundColors[i][2]);
+        }
+        
         glUseProgram(m_Shaders.RGBX.program);
-        glUniform3f(m_Shaders.BKGX, bkgR, bkgG, bkgB);
+        for (size_t i = 0; i < m_BackgroundColors.size(); ++i) {
+            std::string uniformName = "bkg" + std::to_string(i);
+            GLint location = glGetUniformLocation(m_Shaders.RGBX.program, uniformName.c_str());
+            glUniform3f(location, m_BackgroundColors[i][0], m_BackgroundColors[i][1], m_BackgroundColors[i][2]);
+        }
+
         glUseProgram(m_Shaders.EXT.program);
-        glUniform3f(m_Shaders.BKGE, bkgR, bkgG, bkgB);
+        for (size_t i = 0; i < m_BackgroundColors.size(); ++i) {
+            std::string uniformName = "bkg" + std::to_string(i);
+            GLint location = glGetUniformLocation(m_Shaders.EXT.program, uniformName.c_str());
+            glUniform3f(location, m_BackgroundColors[i][0], m_BackgroundColors[i][1], m_BackgroundColors[i][2]);
+        }
+
+        // Swap the shaders to apply the changes
         std::swap(m_Shaders.EXT, g_pHyprOpenGL->m_RenderData.pCurrentMonData->m_shEXT);
         std::swap(m_Shaders.RGBA, g_pHyprOpenGL->m_RenderData.pCurrentMonData->m_shRGBA);
         std::swap(m_Shaders.RGBX, g_pHyprOpenGL->m_RenderData.pCurrentMonData->m_shRGBX);
         m_ShadersSwapped = true;
     }
 }
+
 
 void WindowInverter::OnRenderWindowPost()
 {

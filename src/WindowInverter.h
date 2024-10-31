@@ -12,7 +12,7 @@ public:
     void Init();
     void Unload();
 
-    void SetBackground(GLfloat r, GLfloat g, GLfloat b);
+    void SetBackground(const std::vector<std::array<GLfloat, 3>> colors);
 
     void InvertIfMatches(PHLWINDOW window);
     void ToggleInvert(PHLWINDOW window);
@@ -32,9 +32,7 @@ private:
     ShaderHolder m_Shaders;
     bool m_ShadersSwapped = false;
 
-    GLfloat bkgR = 0.0f;
-    GLfloat bkgG = 0.0f;
-    GLfloat bkgB = 0.0f;
+    const std::vector<std::array<GLfloat, 3>> m_BackgroundColors;
 
     // TODO remove deprecated
     bool MatchesDeprecatedRule(PHLWINDOW window);

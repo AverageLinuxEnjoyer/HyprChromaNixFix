@@ -30,26 +30,29 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
     addDeprecatedEventListeners();
 
     HyprlandAPI::addConfigKeyword(
-        handle, "chromakey_background",
-        [](const char* cmd, const char* val) -> Hyprlang::CParseResult {
-            // Parse val as "r,g,b" into 3 GLfloats
-            std::vector<std::string> result;
-            std::stringstream ss (val);
-            std::string component;
+    handle, "chromakey_background",
+    [](const char* cmd, const char* val) -> Hyprlang::CParseResult {
+        std::vector<std::array<GLfloat, 3>> colors;  // Stores multiple colors
+        std::stringstream ss(val);
+        std::string component;
+        
+        while (std::getline(ss, component, ';')) { // Semicolon separates colors
+            std::stringstream colorStream(component);
+            std::string value;
+            std::array<GLfloat, 3> color;
 
-            getline(ss, component, ',');
-            GLfloat r = std::stof(component);
-            getline(ss, component, ',');
-            GLfloat g = std::stof(component);
-            getline(ss, component, ',');
-            GLfloat b = std::stof(component);
+            for (int i = 0; i < 3 && std::getline(colorStream, value, ','); i++) {
+                color[i] = std::stof(value);
+            }
+            colors.push_back(color);
+        }
+        g_WindowInverter.SetBackground(colors);  // Pass the vector of colors
 
-            g_WindowInverter.SetBackground(r, g, b);
-
-            return Hyprlang::CParseResult(); // return a default CParseResult
-        },
-        { .allowFlags = false }
+        return Hyprlang::CParseResult();
+    },
+    { .allowFlags = false }
     );
+
 
     g_Callbacks.push_back(HyprlandAPI::registerCallbackDynamic(
         PHANDLE, "render",

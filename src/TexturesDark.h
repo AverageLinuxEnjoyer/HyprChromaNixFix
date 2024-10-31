@@ -12,27 +12,30 @@ inline static constexpr auto DARK_MODE_FUNC = [](const std::string colorVarName)
 
 	// Apply opacity changes to pixels similar to one color
 	// vec3 color_rgb = vec3(0,0,255); // Color to replace, in rgb format
-	float similarity = 0.1; // How many similar colors should be affected.
+	float similarity = 0.05; // How many similar colors should be affected.
 
 	float amount = 1.4; // How much similar colors should be changed.
-	float target_opacity = 0.83;
+	float target_opacity = 0.73;
 	// Change any of the above values to get the result you want
 
-	// Set values to a 0 - 1 range
-	vec3 chroma = vec3(bkg[0]/255.0, bkg[1]/255.0, bkg[2]/255.0);
+	vec3 chroma[5];
+	chroma[0] = vec3(bkg[0]/255.0, bkg[1]/255.0, bkg[2]/255.0);
+	chroma[1] = vec3(bkg1[0]/255.0, bkg1[1]/255.0, bkg1[2]/255.0);
+	chroma[2] = vec3(bkg2[0]/255.0, bkg2[1]/255.0, bkg2[2]/255.0);
+	chroma[3] = vec3(bkg3[0]/255.0, bkg3[1]/255.0, bkg3[2]/255.0);
+	chroma[4] = vec3(bkg4[0]/255.0, bkg4[1]/255.0, bkg4[2]/255.0);
 
-	if ({0}.x >=chroma.x - similarity && {0}.x <=chroma.x + similarity &&
-            {0}.y >=chroma.y - similarity && {0}.y <=chroma.y + similarity &&
-            {0}.z >=chroma.z - similarity && {0}.z <=chroma.z + similarity &&
-            {0}.w >= 0.99)
-	{{
-	    // Calculate error between matched pixel and color_rgb values
-            vec3 error = vec3(abs(chroma.x - {0}.x), abs(chroma.y - {0}.y), abs(chroma.z - {0}.z));
-	    float avg_error = (error.x + error.y + error.z) / 3.0;
-            {0}.w = target_opacity + (1.0 - target_opacity)*avg_error*amount/similarity;
-
-	    // {0}.rgba = vec4(0, 0, 1, 0.5);
-	}}
+	for (int i = 0; i < 5; ++i) {  // Adjust loop count based on max colors
+      if ({0}.x >= chroma[i].x - similarity && {0}.x <= chroma[i].x + similarity &&
+          {0}.y >= chroma[i].y - similarity && {0}.y <= chroma[i].y + similarity &&
+          {0}.z >= chroma[i].z - similarity && {0}.z <= chroma[i].z + similarity &&
+          {0}.w >= 0.99)
+      {
+          vec3 error = vec3(abs(chroma[i].x - {0}.x), abs(chroma[i].y - {0}.y), abs(chroma[i].z - {0}.z));
+          float avg_error = (error.x + error.y + error.z) / 3.0;
+          {0}.w = target_opacity + (1.0 - target_opacity) * avg_error * amount / similarity;
+      }
+  }
     )glsl", colorVarName);
 };
 
