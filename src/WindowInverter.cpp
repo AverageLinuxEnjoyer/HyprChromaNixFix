@@ -1,7 +1,7 @@
 #include "WindowInverter.h"
 #include <hyprutils/string/String.hpp>
 
-void WindowInverter::SetBackground(const std::vector<std::array<GLfloat, 3>> colors) {
+void WindowInverter::SetBackground(std::vector<std::array<GLfloat, 3>> colors) {
     m_BackgroundColors = colors;
 }
 

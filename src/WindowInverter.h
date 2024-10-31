@@ -12,7 +12,7 @@ public:
     void Init();
     void Unload();
 
-    void SetBackground(const std::vector<std::array<GLfloat, 3>> colors);
+    void SetBackground(std::vector<std::array<GLfloat, 3>> colors);
 
     void InvertIfMatches(PHLWINDOW window);
     void ToggleInvert(PHLWINDOW window);
