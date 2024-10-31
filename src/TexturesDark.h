@@ -6,8 +6,8 @@
 #include <hyprland/src/render/shaders/Textures.hpp>
 
 
-inline static constexpr auto DARK_MODE_FUNC = [](const std::string colorVarName) -> std::string {
-    return std::format(R"glsl(
+inline static constexpr auto DARK_MODE_FUNC = []() -> std::string {
+    return std::string(R"glsl(
 	// Original shader by ikz87
 
 	// Apply opacity changes to pixels similar to one color
@@ -26,17 +26,17 @@ inline static constexpr auto DARK_MODE_FUNC = [](const std::string colorVarName)
 	chroma[4] = vec3(bkg4[0]/255.0, bkg4[1]/255.0, bkg4[2]/255.0);
 
 	for (int i = 0; i < 5; ++i) {  // Adjust loop count based on max colors
-      if ({0}.x >= chroma[i].x - similarity && {0}.x <= chroma[i].x + similarity &&
-          {0}.y >= chroma[i].y - similarity && {0}.y <= chroma[i].y + similarity &&
-          {0}.z >= chroma[i].z - similarity && {0}.z <= chroma[i].z + similarity &&
-          {0}.w >= 0.99)
+      if (pixColor.x >= chroma[i].x - similarity && pixColor.x <= chroma[i].x + similarity &&
+          pixColor.y >= chroma[i].y - similarity && pixColor.y <= chroma[i].y + similarity &&
+          pixColor.z >= chroma[i].z - similarity && pixColor.z <= chroma[i].z + similarity &&
+          pixColor.w >= 0.99)
       {
-          vec3 error = vec3(abs(chroma[i].x - {0}.x), abs(chroma[i].y - {0}.y), abs(chroma[i].z - {0}.z));
+          vec3 error = vec3(abs(chroma[i].x - pixColor.x), abs(chroma[i].y - pixColor.y), abs(chroma[i].z - pixColor.z));
           float avg_error = (error.x + error.y + error.z) / 3.0;
-          {0}.w = target_opacity + (1.0 - target_opacity) * avg_error * amount / similarity;
+          pixColor.w = target_opacity + (1.0 - target_opacity) * avg_error * amount / similarity;
       }
   }
-    )glsl", colorVarName);
+    )glsl");
 };
 
 
@@ -75,7 +75,7 @@ void main() {
 	    pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC("pixColor") +  R"glsl(
+	)glsl" + DARK_MODE_FUNC() +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
@@ -117,7 +117,7 @@ void main() {
 	pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC("pixColor") +  R"glsl(
+	)glsl" + DARK_MODE_FUNC() +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
@@ -161,7 +161,7 @@ void main() {
 	pixColor[2] = pixColor[2] * tint[2];
     }
 
-	)glsl" + DARK_MODE_FUNC("pixColor") +  R"glsl(
+	)glsl" + DARK_MODE_FUNC() +  R"glsl(
 
     if (radius > 0.0) {
     )glsl" +
