@@ -32,7 +32,7 @@ private:
     ShaderHolder m_Shaders;
     bool m_ShadersSwapped = false;
 
-    const std::vector<std::array<GLfloat, 3>> m_BackgroundColors;
+    std::vector<std::array<GLfloat, 3>> m_BackgroundColors;
 
     // TODO remove deprecated
     bool MatchesDeprecatedRule(PHLWINDOW window);
