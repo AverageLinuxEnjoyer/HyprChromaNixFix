@@ -15,7 +15,7 @@ inline static constexpr auto DARK_MODE_FUNC = [](const std::string colorVarName)
 	float similarity = 0.1; // How many similar colors should be affected.
 
 	float amount = 1.4; // How much similar colors should be changed.
-	float target_opacity = 0.83;
+	float target_opacity = 0.63;
 	// Change any of the above values to get the result you want
 
 	// Set values to a 0 - 1 range
